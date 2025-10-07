@@ -63,13 +63,14 @@ const items = [
 ]
 
 function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+const safeAreaInsets = useSafeAreaInsets();
 
   return (
     <View style={styles.container}>
-      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, paddingTop: safeAreaInsets.top, paddingBottom: safeAreaInsets.bottom, paddingLeft: 8, paddingRight: 8 }}>
+      <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
+        
         {items.map((item) => (
-          <Text key={item.id}>{item.title}</Text>
+          <View key={item.id} style={styles.photoView}><Text key={item.id}>{item.title}</Text></View>
         ))}
       </View>
     </View>
@@ -80,6 +81,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flexWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', flex: 1, paddingLeft: 8, paddingRight: 8
+  },
+  photoView: {
+    width: '29.33%',
+    height: "25%",
+    margin: '2%',
+    backgroundColor: '#e9eef2',
+    borderWidth: 2,
+    borderColor: '#dee1e9',
+    borderStyle: 'dashed',
+    borderRadius: 14,
+  }
 });
 
 export default App;
