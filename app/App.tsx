@@ -228,6 +228,7 @@ function AppContent() {
         },
         body: JSON.stringify(newPhoto),
       });
+      setPhotos([...photos.slice(0, index), newPhoto, ...photos.slice(index + 1)]);
     }
   }
 
