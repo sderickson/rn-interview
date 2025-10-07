@@ -118,7 +118,6 @@ function AppContent() {
   const [rearrangeMode, setRearrangeMode] = useState<RearrangeState>({on: false, firstIndex: undefined});
   
   useEffect(() => {
-    console.log("hey effect buddy!");
     fetch("http://localhost:3000/member/1/photos")
       .then(response => response.json())
       .then((data: APIPhoto[]) => {
@@ -174,28 +173,36 @@ function AppContent() {
           const actionViewStyle = styles.removePhotoActionView;
           return (
             <View key={index} style={styles.photoView}>
-              <Image source={{uri: photo.url}} style={styles.photoImage} />
+              
+              <Pressable onPress={() => {setRearrangeMode({on: true, firstIndex: index})}}>
+                <Image source={{uri: photo.url}} style={styles.photoImage} />
+              </Pressable>
               <Pressable onPress={() => removePhoto(index)} style={{...styles.photoActionView, ...actionViewStyle}}>
-              <View>
-                <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>x</Text>
-              </View>
-
+                <View>
+                  <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>x</Text>
+                </View>
               </Pressable>
             </View>
           )
         })}
       </View>
       <View style={styles.footer}>
-          {rearrangeMode.on && (
-            <View style={styles.rearrangeActionsView}>
-              <Text>Click photo to move</Text>
-              <Button title="Cancel" onPress={() => {setRearrangeMode({on: false, firstIndex: undefined})}} />
-            </View>
-          )}
           {!rearrangeMode.on && (
             <View style={styles.rearrangeActionsView}>
               <Text> </Text>
-              <Button title="Rearrange" onPress={() => {setRearrangeMode({on: true, firstIndex: 0})}} />
+              <Button title="Rearrange" onPress={() => {setRearrangeMode({on: true, firstIndex: undefined})}} />
+            </View>
+          )}
+          {rearrangeMode.on && rearrangeMode.firstIndex === undefined && (
+            <View style={styles.rearrangeActionsView}>
+              <Text>Tap photo to move</Text>
+              <Button title="Cancel" onPress={() => {setRearrangeMode({on: false, firstIndex: undefined})}} />
+            </View>
+          )}
+          {rearrangeMode.on && rearrangeMode.firstIndex !== undefined && (
+            <View style={styles.rearrangeActionsView}>
+              <Text>Tap location to swap with</Text>
+              <Button title="Cancel" onPress={() => {setRearrangeMode({on: false, firstIndex: undefined})}} />
             </View>
           )}
         </View>
