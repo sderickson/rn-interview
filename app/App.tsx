@@ -216,7 +216,7 @@ function AppContent() {
         {photos.map((photo, index) => {
           if (!photo) {
             return (
-              <Pressable  style={styles.photoViewPressable} key={index} onPress={() => pressPhoto(index)}>
+              <Pressable  style={styles.photoTile} key={index} onPress={() => pressPhoto(index)}>
                 <View style={styles.photoView}>
                   <Pressable onPress={() => addPhoto(index)} style={{...styles.photoActionView, ...styles.addPhotoActionView}}>
                     <View>
@@ -230,9 +230,11 @@ function AppContent() {
 
           const actionViewStyle = styles.removePhotoActionView;
           return (
-            <View key={index} style={styles.photoViewPressable}>
+            <View key={index} style={styles.photoTile}>
               
-              <Pressable onPress={() => { pressPhoto(index) }}>
+              <Pressable style={styles.photoPressable} onPress={() => { pressPhoto(index) }} onTouchMove={(event) => {
+                console.log("touch move", event);
+              }}>
                 <Image source={{uri: photo.url}} style={styles.photoImage} />
               </Pressable>
               <Pressable onPress={() => removePhoto(index)} style={{...styles.photoActionView, ...actionViewStyle}}>
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', flex: 1, paddingLeft: 8, paddingRight: 8
   },
-  photoViewPressable: {
+  photoTile: {
     position: 'relative',
     width: '29.33%',
     height: "25%",
@@ -287,6 +289,9 @@ const styles = StyleSheet.create({
     borderColor: '#dee1e9',
     borderStyle: 'dashed',
     borderRadius: 14,
+  },
+  photoPressable: {
+    overflow: 'hidden',
   },
   photoActionView: {
     position: 'absolute',
@@ -315,6 +320,8 @@ const styles = StyleSheet.create({
   photoImage: {
     width: '100%',
     height: '100%',
+    position: 'relative',
+    left: 20,
     borderRadius: 14,
   },
   footer: {
