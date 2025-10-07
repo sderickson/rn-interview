@@ -186,15 +186,19 @@ function AppContent() {
         })}
       </View>
       <View style={styles.footer}>
-        <View style={styles.rearrangeActionsView}>
           {rearrangeMode.on && (
-            <Button title="Cancel" onPress={() => {setRearrangeMode({on: false, firstIndex: undefined})}} />
+            <View style={styles.rearrangeActionsView}>
+              <Text>Click photo to move</Text>
+              <Button title="Cancel" onPress={() => {setRearrangeMode({on: false, firstIndex: undefined})}} />
+            </View>
           )}
           {!rearrangeMode.on && (
-          <Button title="Rearrange" onPress={() => {setRearrangeMode({on: true, firstIndex: 0})}} />
+            <View style={styles.rearrangeActionsView}>
+              <Text> </Text>
+              <Button title="Rearrange" onPress={() => {setRearrangeMode({on: true, firstIndex: 0})}} />
+            </View>
           )}
         </View>
-      </View>
     </View>
   );
 }
@@ -255,6 +259,9 @@ const styles = StyleSheet.create({
   rearrangeActionsView: {
     height: 100,
     backgroundColor: "#eee",
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
