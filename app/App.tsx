@@ -133,7 +133,6 @@ function AppContent() {
   }, []);
 
   const addPhoto = (index: number) => {
-    console.log("addPhoto", index);
     const newPhoto: APIPhotoBase = {
       url: items[index].url,
       width: 0,
@@ -213,8 +212,6 @@ function AppContent() {
   }
 
   const onLoadPhoto = (index: number, width: number, height: number) => {
-    console.log("onLoadPhoto", index, width, height);
-
     const existingPhoto = photos[index];
     if (existingPhoto) {
       const newPhoto = {
@@ -278,17 +275,6 @@ function AppContent() {
           const widthMultiple = tileWidth/photo.width;
           const heightMultiple = tileHeight/photo.height;
           const multiple = Math.max(widthMultiple, heightMultiple);
-
-          console.log({
-            photoWidth: photo.width,
-            photoHeight: photo.height,
-            tileWidth,
-            tileHeight,
-            widthMultiple,
-            heightMultiple,
-            multiple,
-          })
-
 
           return (
             <View key={index} style={styles.photoTile}>
