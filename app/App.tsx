@@ -10,7 +10,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -99,11 +99,30 @@ const defaultPhotos: (APIPhotoBase | undefined)[] = [
   undefined,
 ];
 
+interface APIPhoto extends APIPhotoBase {
+  id: string;
+  memberId: number;
+}
+
 
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
 
   const [photos, setPhotos] = useState<(APIPhotoBase | undefined)[]>(defaultPhotos);
+  
+  useEffect(() => {
+    console.log("hey effect buddy!");
+    fetch("http://localhost:3000/member/1/photos")
+      .then(response => response.json())
+      .then((data: APIPhoto[]) => {
+        
+        const newPhotoArray: (APIPhoto | undefined)[] = new Array(9).fill(undefined);
+        data.forEach(photo => {
+          newPhotoArray[photo.position] = photo;
+        });
+        setPhotos(newPhotoArray);
+      });
+  }, []);
 
   const addPhoto = (index: number) => {
     setPhotos([...photos.slice(0, index), {
@@ -123,20 +142,6 @@ function AppContent() {
   return (
     <View style={styles.container}>
       <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
-        
-        {/* {items.map((item) => {
-          const id = item.id;
-          const exists = !!(id % 2);
-          const actionViewStyle = exists ? styles.addPhotoActionView : styles.removePhotoActionView;
-          return (
-            <View key={item.id} style={styles.photoView}>
-              <Image source={{uri: item.url}} style={styles.photoImage} />
-              <View style={{...styles.photoActionView, ...actionViewStyle}}>
-                <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>{exists ? '+' : 'x'}</Text>
-              </View>
-            </View>
-          )
-        })} */}
 
         {photos.map((photo, index) => {
 
