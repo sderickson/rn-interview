@@ -69,9 +69,19 @@ const safeAreaInsets = useSafeAreaInsets();
     <View style={styles.container}>
       <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
         
-        {items.map((item) => (
-          <View key={item.id} style={styles.photoView}><Text key={item.id}>{item.title}</Text></View>
-        ))}
+        {items.map((item) => {
+          const id = item.id;
+          const exists = !!(id % 2);
+          const actionViewStyle = exists ? styles.addPhotoActionView : styles.removePhotoActionView;
+          return (
+            <View key={item.id} style={styles.photoView}>
+              <View style={{...styles.photoActionView, ...actionViewStyle}}>
+                <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>{exists ? '+' : 'x'}</Text>
+              </View>
+              {/* <Text key={item.id}>{item.title}</Text> */}
+            </View>
+          )
+        })}
       </View>
     </View>
   );
@@ -87,6 +97,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', flex: 1, paddingLeft: 8, paddingRight: 8
   },
   photoView: {
+    position: 'relative',
     width: '29.33%',
     height: "25%",
     margin: '2%',
@@ -95,7 +106,31 @@ const styles = StyleSheet.create({
     borderColor: '#dee1e9',
     borderStyle: 'dashed',
     borderRadius: 14,
-  }
+  },
+  photoActionView: {
+    position: 'absolute',
+    bottom: -8,
+    right: -8,
+    backgroundColor: '#aaa',
+    borderRadius: 100,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    boxShadow: "0 0 2px 2px rgba(0, 0, 0, 0.1)",
+    alignItems: 'center',
+  },
+  addPhotoActionView: {
+    color: "red",
+    backgroundColor: "white",
+  },
+  removePhotoActionView: {
+    color: "white",
+    backgroundColor: "red",
+  },
+  photoActionViewText: {
+    fontSize: 17,
+    fontWeight: "bold",
+  },
 });
 
 export default App;
