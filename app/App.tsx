@@ -170,6 +170,37 @@ function AppContent() {
       setRearrangeMode({on: false, firstIndex: undefined});
       const newPhotos = [...photos];
       const [a, b] = [photos[rearrangeMode.firstIndex], photos[index]];
+
+      if (b) {
+        newPhotos[rearrangeMode.firstIndex] = {
+          ...b,
+          position: rearrangeMode.firstIndex,
+        };
+        fetch(`http://localhost:3000/photos/${(b as APIPhoto).id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newPhotos[rearrangeMode.firstIndex]),
+        });
+      } else {
+        newPhotos[rearrangeMode.firstIndex] = undefined;
+      }
+      if (a) {
+        newPhotos[index] = {
+          ...a,
+          position: index,
+        };
+        fetch(`http://localhost:3000/photos/${(a as APIPhoto).id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newPhotos[index]),
+        });
+      } else {
+        newPhotos[index] = undefined;
+      }
       newPhotos[rearrangeMode.firstIndex] = b;
       newPhotos[index] = a;
       setPhotos(newPhotos);
