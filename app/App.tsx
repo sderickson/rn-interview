@@ -173,19 +173,22 @@ function AppContent() {
         {photos.map((photo, index) => {
 
           if (!photo) {
-            return <View key={index} style={styles.photoView}>
-              <Pressable onPress={() => addPhoto(index)} style={{...styles.photoActionView, ...styles.addPhotoActionView}}>
-                <View>
-                  <Text style={{color: styles.addPhotoActionView.color, ...styles.photoActionViewText}}>+</Text>
+            return (
+              <Pressable  style={styles.photoViewPressable} key={index} onPress={() => pressPhoto(index)}>
+                <View style={styles.photoView}>
+                  <Pressable onPress={() => addPhoto(index)} style={{...styles.photoActionView, ...styles.addPhotoActionView}}>
+                    <View>
+                      <Text style={{color: styles.addPhotoActionView.color, ...styles.photoActionViewText}}>+</Text>
+                    </View>
+                  </Pressable>
                 </View>
               </Pressable>
-            
-          </View>;
+            );
           }
 
           const actionViewStyle = styles.removePhotoActionView;
           return (
-            <View key={index} style={styles.photoView}>
+            <View key={index} style={styles.photoViewPressable}>
               
               <Pressable onPress={() => { pressPhoto(index) }}>
                 <Image source={{uri: photo.url}} style={styles.photoImage} />
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', flex: 1, paddingLeft: 8, paddingRight: 8
   },
-  photoView: {
+  photoViewPressable: {
     position: 'relative',
     width: '29.33%',
     height: "25%",
@@ -282,6 +285,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
+  },
+  photoView: {
+    height: "100%",
+    width: "100%",
   },
 });
 
