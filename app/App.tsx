@@ -10,6 +10,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useState } from 'react';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -21,8 +22,6 @@ function App() {
     </SafeAreaProvider>
   );
 }
-
-const allUrls = "";
 
 const items = [
   {
@@ -72,14 +71,45 @@ const items = [
   },
 ]
 
+interface APIPhotoBase {
+  url: string;
+  width: number;
+  height: number;
+  position: number;
+  centerX: number;
+  centerY: number;
+}
+
+const defaultPhotos: (APIPhotoBase | undefined)[] = [
+  undefined,
+  {
+    url: items[0].url,
+    width: 100,
+    height: 100,
+    position: 0,
+    centerX: 50,
+    centerY: 50,
+  },
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+];
+
+
 function AppContent() {
-const safeAreaInsets = useSafeAreaInsets();
+  const safeAreaInsets = useSafeAreaInsets();
+
+  const [photos, setPhotos] = useState<(APIPhotoBase | undefined)[]>(defaultPhotos);  
 
   return (
     <View style={styles.container}>
       <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
         
-        {items.map((item) => {
+        {/* {items.map((item) => {
           const id = item.id;
           const exists = !!(id % 2);
           const actionViewStyle = exists ? styles.addPhotoActionView : styles.removePhotoActionView;
@@ -89,7 +119,27 @@ const safeAreaInsets = useSafeAreaInsets();
               <View style={{...styles.photoActionView, ...actionViewStyle}}>
                 <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>{exists ? '+' : 'x'}</Text>
               </View>
-              {/* <Text key={item.id}>{item.title}</Text> */}
+            </View>
+          )
+        })} */}
+
+        {photos.map((photo, index) => {
+
+          if (!photo) {
+            return <View key={index} style={styles.photoView}>
+            <View style={{...styles.photoActionView, ...styles.addPhotoActionView}}>
+              <Text style={{color: styles.addPhotoActionView.color, ...styles.photoActionViewText}}>+</Text>
+            </View>
+          </View>;
+          }
+
+          const actionViewStyle = styles.removePhotoActionView;
+          return (
+            <View key={index} style={styles.photoView}>
+              <Image source={{uri: photo.url}} style={styles.photoImage} />
+              <View style={{...styles.photoActionView, ...actionViewStyle}}>
+                <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>x</Text>
+              </View>
             </View>
           )
         })}
@@ -145,6 +195,7 @@ const styles = StyleSheet.create({
   photoImage: {
     width: '100%',
     height: '100%',
+    borderRadius: 14,
   },
 });
 
