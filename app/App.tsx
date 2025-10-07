@@ -275,6 +275,16 @@ function AppContent() {
           const widthMultiple = tileWidth/photo.width;
           const heightMultiple = tileHeight/photo.height;
           const multiple = Math.max(widthMultiple, heightMultiple);
+          let left = 0;
+          let top = 0;
+          if (multiple === heightMultiple) {
+            const actualMiddle = tileWidth/2;
+            // left = (actualMiddle - (photo.centerX)/tileWidth) * -1;
+            left = ((multiple *photo.width/2) - actualMiddle) * -1;
+          } else {
+            const actualMiddle = tileHeight/2;
+            top = ((multiple *photo.height/2) - actualMiddle) * -1;
+          }
 
           return (
             <View key={index} style={styles.photoTile}>
@@ -299,6 +309,8 @@ function AppContent() {
                   // version 3
                   width: photo.width * multiple,
                   height: photo.height * multiple,
+                  left,
+                  top,
                 }} onLoad={(event) => {
                   onLoadPhoto(index, event.nativeEvent.source.width, event.nativeEvent.source.height);
                 }} />
