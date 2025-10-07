@@ -80,7 +80,7 @@ interface APIPhotoBase {
   centerY: number;
 }
 
-const defaultPhotos: (APIPhotoBase | undefined)[] = [
+const defaultPhotos: (APIPhotoBase | APIPhoto | undefined)[] = [
   undefined,
   {
     url: items[0].url,
@@ -113,7 +113,7 @@ interface RearrangeState {
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
 
-  const [photos, setPhotos] = useState<(APIPhotoBase | undefined)[]>(defaultPhotos);
+  const [photos, setPhotos] = useState<(APIPhotoBase | APIPhoto | undefined)[]>(defaultPhotos);
 
   const [rearrangeMode, setRearrangeMode] = useState<RearrangeState>({on: false, firstIndex: undefined});
   
@@ -146,11 +146,23 @@ function AppContent() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(newPhoto),
+    }).then((response: Response) => response.json()).then((data: APIPhoto) => {
+      const newPhotos = [...photos];
+      newPhotos[index] = data;
+      setPhotos(newPhotos);
     });
   }
 
   const removePhoto = (index: number) => {
+    const photo = photos[index];
+    if (!photo || !(photo as APIPhoto).id) {
+      return;
+    }
+    const id = (photo as APIPhoto).id;
     setPhotos([...photos.slice(0, index), undefined, ...photos.slice(index + 1)]);
+    fetch(`http://localhost:3000/photos/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   const pressPhoto = (index: number) => {
@@ -171,7 +183,6 @@ function AppContent() {
       <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
 
         {photos.map((photo, index) => {
-
           if (!photo) {
             return (
               <Pressable  style={styles.photoViewPressable} key={index} onPress={() => pressPhoto(index)}>
