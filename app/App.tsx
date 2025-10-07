@@ -235,7 +235,9 @@ function AppContent() {
               <Pressable style={styles.photoPressable} onPress={() => { pressPhoto(index) }} onTouchMove={(event) => {
                 console.log("touch move", event);
               }}>
-                <Image source={{uri: photo.url}} style={styles.photoImage} />
+                <Image source={{uri: photo.url}} style={styles.photoImage} onLoad={(event) => {
+                  console.log("load", event.nativeEvent.source.width, event.nativeEvent.source.height, "for image", index);
+                }} />
               </Pressable>
               <Pressable onPress={() => removePhoto(index)} style={{...styles.photoActionView, ...actionViewStyle}}>
                 <View>
