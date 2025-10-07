@@ -153,6 +153,19 @@ function AppContent() {
     setPhotos([...photos.slice(0, index), undefined, ...photos.slice(index + 1)]);
   }
 
+  const pressPhoto = (index: number) => {
+    if (rearrangeMode.on && rearrangeMode.firstIndex !== undefined) {
+      setRearrangeMode({on: false, firstIndex: undefined});
+      const newPhotos = [...photos];
+      const [a, b] = [photos[rearrangeMode.firstIndex], photos[index]];
+      newPhotos[rearrangeMode.firstIndex] = b;
+      newPhotos[index] = a;
+      setPhotos(newPhotos);
+      return;
+    }
+    setRearrangeMode({on: true, firstIndex: index})
+  }
+
   return (
     <View style={styles.container}>
       <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
@@ -174,7 +187,7 @@ function AppContent() {
           return (
             <View key={index} style={styles.photoView}>
               
-              <Pressable onPress={() => {setRearrangeMode({on: true, firstIndex: index})}}>
+              <Pressable onPress={() => { pressPhoto(index) }}>
                 <Image source={{uri: photo.url}} style={styles.photoImage} />
               </Pressable>
               <Pressable onPress={() => removePhoto(index)} style={{...styles.photoActionView, ...actionViewStyle}}>
