@@ -133,13 +133,14 @@ function AppContent() {
   }, []);
 
   const addPhoto = (index: number) => {
+    console.log("addPhoto", index);
     const newPhoto: APIPhotoBase = {
       url: items[index].url,
-      width: 100,
-      height: 100,
+      width: 0,
+      height: 0,
       position: index,
-      centerX: 50,
-      centerY: 50,
+      centerX: 0,
+      centerY: 0,
     };
     setPhotos([...photos.slice(0, index), newPhoto, ...photos.slice(index + 1)]);
     fetch(`http://localhost:3000/member/1/photos`, {
@@ -212,18 +213,44 @@ function AppContent() {
   }
 
   const onLoadPhoto = (index: number, width: number, height: number) => {
-    const newPhotos = [...photos];
-    if (newPhotos[index]) {
-      newPhotos[index] = {
-        ...newPhotos[index],
+    console.log("onLoadPhoto", index, width, height);
+
+    const existingPhoto = photos[index];
+    if (existingPhoto) {
+      const newPhoto = {
+        ...existingPhoto,
         width,
         height,
         centerX: width/2,
         centerY: height/2,
       };
-      setPhotos(newPhotos);
+      fetch(`http://localhost:3000/photos/${(existingPhoto as APIPhoto).id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPhoto),
+      });
     }
   }
+
+
+  //   const newPhotos = JSON.parse(JSON.stringify(photos));
+    
+  //   if (newPhotos[index]) {
+  //     console.log("set photo dimensions", index, width, height);
+  //     newPhotos[index] = {
+  //       ...newPhotos[index],
+  //       width,
+  //       height,
+  //       centerX: newPhotos[index]?.centerX || width/2,
+  //       centerY: newPhotos[index]?.centerY || height/2,
+  //     };
+  //     console.log("set photo dimensions", newPhotos);
+  //     setPhotos(newPhotos);
+  //   }
+  // }
+  // console.log({photos})
 
   return (
     <View style={styles.container}>
@@ -246,8 +273,21 @@ function AppContent() {
 
           const actionViewStyle = styles.removePhotoActionView;
 
-          const tileWidth = windowWidth *0.272 *1.2;
-          const tileHeight = windowHeight *0.19 *1.2;
+          const tileWidth = windowWidth *0.272;
+          const tileHeight = windowHeight *0.19;
+          const widthMultiple = tileWidth/photo.width;
+          const heightMultiple = tileHeight/photo.height;
+          const multiple = Math.max(widthMultiple, heightMultiple);
+
+          console.log({
+            photoWidth: photo.width,
+            photoHeight: photo.height,
+            tileWidth,
+            tileHeight,
+            widthMultiple,
+            heightMultiple,
+            multiple,
+          })
 
 
           return (
@@ -255,17 +295,24 @@ function AppContent() {
               
               <Pressable style={{
                 ...styles.photoPressable,
-                width: tileWidth/1.2,
-                height: tileHeight/1.2
+                width: tileWidth,
+                height: tileHeight,
               }} onPress={() => { pressPhoto(index) }} onTouchMove={(event) => {
                 console.log("touch move", event);
               }}>
                 <Image source={{uri: photo.url}} style={{
                   ...styles.photoImage,
+                  // version 1
                   // width: photo.width,
                   // height: photo.height,
-                  width: tileWidth,
-                  height: tileHeight,
+
+                  // version 2
+                  // width: tileWidth,
+                  // height: tileHeight,
+
+                  // version 3
+                  width: photo.width * multiple,
+                  height: photo.height * multiple,
                 }} onLoad={(event) => {
                   onLoadPhoto(index, event.nativeEvent.source.width, event.nativeEvent.source.height);
                 }} />
