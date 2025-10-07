@@ -5,7 +5,7 @@
  * @format
  */
 
-import { Image, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Image, Pressable, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -103,7 +103,22 @@ const defaultPhotos: (APIPhotoBase | undefined)[] = [
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
 
-  const [photos, setPhotos] = useState<(APIPhotoBase | undefined)[]>(defaultPhotos);  
+  const [photos, setPhotos] = useState<(APIPhotoBase | undefined)[]>(defaultPhotos);
+
+  const addPhoto = (index: number) => {
+    setPhotos([...photos.slice(0, index), {
+      url: items[index].url,
+      width: 100,
+      height: 100,
+      position: index,
+      centerX: 50,
+      centerY: 50,
+    }, ...photos.slice(index + 1)]);
+  }
+
+  const removePhoto = (index: number) => {
+    setPhotos([...photos.slice(0, index), undefined, ...photos.slice(index + 1)]);
+  }
 
   return (
     <View style={styles.container}>
@@ -127,9 +142,12 @@ function AppContent() {
 
           if (!photo) {
             return <View key={index} style={styles.photoView}>
-            <View style={{...styles.photoActionView, ...styles.addPhotoActionView}}>
-              <Text style={{color: styles.addPhotoActionView.color, ...styles.photoActionViewText}}>+</Text>
-            </View>
+              <Pressable onPress={() => addPhoto(index)} style={{...styles.photoActionView, ...styles.addPhotoActionView}}>
+                <View>
+                  <Text style={{color: styles.addPhotoActionView.color, ...styles.photoActionViewText}}>+</Text>
+                </View>
+              </Pressable>
+            
           </View>;
           }
 
@@ -137,9 +155,12 @@ function AppContent() {
           return (
             <View key={index} style={styles.photoView}>
               <Image source={{uri: photo.url}} style={styles.photoImage} />
-              <View style={{...styles.photoActionView, ...actionViewStyle}}>
+              <Pressable onPress={() => removePhoto(index)} style={{...styles.photoActionView, ...actionViewStyle}}>
+              <View>
                 <Text style={{color: actionViewStyle.color, ...styles.photoActionViewText}}>x</Text>
               </View>
+
+              </Pressable>
             </View>
           )
         })}
