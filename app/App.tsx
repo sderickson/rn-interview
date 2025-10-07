@@ -5,7 +5,7 @@
  * @format
  */
 
-import { Image, Pressable, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Button, Image, Pressable, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -104,11 +104,18 @@ interface APIPhoto extends APIPhotoBase {
   memberId: number;
 }
 
+interface RearrangeState {
+  on: boolean;
+  firstIndex?: number;
+}
+
 
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
 
   const [photos, setPhotos] = useState<(APIPhotoBase | undefined)[]>(defaultPhotos);
+
+  const [rearrangeMode, setRearrangeMode] = useState<RearrangeState>({on: false, firstIndex: undefined});
   
   useEffect(() => {
     console.log("hey effect buddy!");
@@ -178,6 +185,16 @@ function AppContent() {
           )
         })}
       </View>
+      <View style={styles.footer}>
+        <View style={styles.rearrangeActionsView}>
+          {rearrangeMode.on && (
+            <Button title="Cancel" onPress={() => {setRearrangeMode({on: false, firstIndex: undefined})}} />
+          )}
+          {!rearrangeMode.on && (
+          <Button title="Rearrange" onPress={() => {setRearrangeMode({on: true, firstIndex: 0})}} />
+          )}
+        </View>
+      </View>
     </View>
   );
 }
@@ -230,6 +247,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 14,
+  },
+  footer: {
+    height: 100,
+    backgroundColor: "gray",
+  },
+  rearrangeActionsView: {
+    height: 100,
+    backgroundColor: "#eee",
   },
 });
 
