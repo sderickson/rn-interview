@@ -125,14 +125,22 @@ function AppContent() {
   }, []);
 
   const addPhoto = (index: number) => {
-    setPhotos([...photos.slice(0, index), {
+    const newPhoto: APIPhotoBase = {
       url: items[index].url,
       width: 100,
       height: 100,
       position: index,
       centerX: 50,
       centerY: 50,
-    }, ...photos.slice(index + 1)]);
+    };
+    setPhotos([...photos.slice(0, index), newPhoto, ...photos.slice(index + 1)]);
+    fetch(`http://localhost:3000/member/1/photos`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newPhoto),
+    });
   }
 
   const removePhoto = (index: number) => {
