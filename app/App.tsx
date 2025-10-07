@@ -5,7 +5,7 @@
  * @format
  */
 
-import { Button, Image, Pressable, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Button, Image, Pressable, StatusBar, StyleSheet, Text, useColorScheme, View, useWindowDimensions } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -111,6 +111,8 @@ interface RearrangeState {
 
 
 function AppContent() {
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
   const safeAreaInsets = useSafeAreaInsets();
 
   const [photos, setPhotos] = useState<(APIPhotoBase | APIPhoto | undefined)[]>(defaultPhotos);
@@ -209,6 +211,20 @@ function AppContent() {
     setRearrangeMode({on: true, firstIndex: index})
   }
 
+  const onLoadPhoto = (index: number, width: number, height: number) => {
+    const newPhotos = [...photos];
+    if (newPhotos[index]) {
+      newPhotos[index] = {
+        ...newPhotos[index],
+        width,
+        height,
+        centerX: width/2,
+        centerY: height/2,
+      };
+      setPhotos(newPhotos);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={{...styles.flexWrapper,  paddingBottom: safeAreaInsets.bottom, paddingTop: safeAreaInsets.top}}>
@@ -229,14 +245,29 @@ function AppContent() {
           }
 
           const actionViewStyle = styles.removePhotoActionView;
+
+          const tileWidth = windowWidth *0.272 *1.2;
+          const tileHeight = windowHeight *0.19 *1.2;
+
+
           return (
             <View key={index} style={styles.photoTile}>
               
-              <Pressable style={styles.photoPressable} onPress={() => { pressPhoto(index) }} onTouchMove={(event) => {
+              <Pressable style={{
+                ...styles.photoPressable,
+                width: tileWidth/1.2,
+                height: tileHeight/1.2
+              }} onPress={() => { pressPhoto(index) }} onTouchMove={(event) => {
                 console.log("touch move", event);
               }}>
-                <Image source={{uri: photo.url}} style={styles.photoImage} onLoad={(event) => {
-                  console.log("load", event.nativeEvent.source.width, event.nativeEvent.source.height, "for image", index);
+                <Image source={{uri: photo.url}} style={{
+                  ...styles.photoImage,
+                  // width: photo.width,
+                  // height: photo.height,
+                  width: tileWidth,
+                  height: tileHeight,
+                }} onLoad={(event) => {
+                  onLoadPhoto(index, event.nativeEvent.source.width, event.nativeEvent.source.height);
                 }} />
               </Pressable>
               <Pressable onPress={() => removePhoto(index)} style={{...styles.photoActionView, ...actionViewStyle}}>
@@ -294,6 +325,7 @@ const styles = StyleSheet.create({
   },
   photoPressable: {
     overflow: 'hidden',
+    borderRadius: 14,
   },
   photoActionView: {
     position: 'absolute',
@@ -320,10 +352,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   photoImage: {
-    width: '100%',
-    height: '100%',
+    // width: '100%',
+    // height: '100%',
     position: 'relative',
-    left: 20,
     borderRadius: 14,
   },
   footer: {
